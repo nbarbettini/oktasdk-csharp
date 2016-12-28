@@ -104,6 +104,7 @@
   <ItemGroup>
     <Compile Include="Clients\AppsClientTests.cs" />
     <Compile Include="Clients\Constants.cs" />
+    <Compile Include="Clients\EventsClientTests.cs" />
     <Compile Include="Clients\GroupsClientTests.cs" />
     <Compile Include="Clients\Helpers.cs" />
     <Compile Include="Clients\TestObjects.cs" />
