@@ -60,18 +60,25 @@ namespace Okta.Core.Automation
             }
             else
             {
-                Core.PagedResults<Models.User> res = null;
-                if (!string.IsNullOrEmpty(Url))
+                if (Limit > 0)
                 {
-                    res = usersClient.GetList(new Uri(Url));
+                    Core.PagedResults<Models.User> res = null;
+                    if (!string.IsNullOrEmpty(Url))
+                    {
+                        res = usersClient.GetList(new Uri(Url));
+                    }
+                    else
+                    {
+                        res = usersClient.GetList(pageSize: (Limit > 0) ? Limit : 200, filter: new FilterBuilder(Filter), searchType: SearchType.Filter, query: Query);
+                    }
+                    WriteObject(res, true);
                 }
                 else
                 {
-                    res = usersClient.GetList(pageSize: (Limit > 0) ? Limit : 200, filter: new FilterBuilder(Filter), searchType: SearchType.Filter, query: Query);
+                    var users = usersClient.GetFilteredEnumerator(pageSize: (Limit > 0) ? Limit : 200, query: Query, filter: new FilterBuilder(Filter));
+                    WriteObject(users);
                 }
-                //var users = usersClient.GetFilteredEnumerator(pageSize: (Limit > 0) ? Limit : 200, query: Query, filter: new FilterBuilder(Filter));
 
-                WriteObject(res, true);
             }
         }
     }
