@@ -60,16 +60,16 @@ namespace Okta.Core.Automation
             }
             else
             {
-                if (Limit > 0)
+                if (!string.IsNullOrEmpty(Url) || Limit > 0)
                 {
                     Core.PagedResults<Models.User> res = null;
                     if (!string.IsNullOrEmpty(Url))
                     {
                         res = usersClient.GetList(new Uri(Url));
                     }
-                    else
+                    else // Limit > 0
                     {
-                        res = usersClient.GetList(pageSize: (Limit > 0) ? Limit : 200, filter: new FilterBuilder(Filter), searchType: SearchType.Filter, query: Query);
+                        res = usersClient.GetList(pageSize: Limit, filter: new FilterBuilder(Filter), searchType: SearchType.Filter, query: Query);
                     }
                     WriteObject(res, true);
                 }
