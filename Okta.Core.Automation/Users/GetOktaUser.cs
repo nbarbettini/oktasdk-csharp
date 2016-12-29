@@ -34,6 +34,22 @@ namespace Okta.Core.Automation
         )]
         public string Filter { get; set; }
 
+        [Parameter(
+            Mandatory = false,
+            ValueFromPipelineByPropertyName = true,
+            Position = 3,
+            HelpMessage = "Maximum number of users to retrieve"
+            )]
+        public int Limit { get; set; }
+
+        [Parameter(
+    Mandatory = false,
+    ValueFromPipelineByPropertyName = true,
+    Position = 4,
+    HelpMessage = "Url (typically the next page url)"
+)]
+        public string Url { get; set; }
+
         protected override void ProcessRecord()
         {
             var usersClient = Client.GetUsersClient();
@@ -44,8 +60,18 @@ namespace Okta.Core.Automation
             }
             else
             {
-                var users = usersClient.GetFilteredEnumerator(query: Query, filter: new FilterBuilder(Filter));
-                WriteObject(users);
+                Core.PagedResults<Models.User> res = null;
+                if (!string.IsNullOrEmpty(Url))
+                {
+                    res = usersClient.GetList(new Uri(Url));
+                }
+                else
+                {
+                    res = usersClient.GetList(pageSize: (Limit > 0) ? Limit : 200, filter: new FilterBuilder(Filter), searchType: SearchType.Filter, query: Query);
+                }
+                //var users = usersClient.GetFilteredEnumerator(pageSize: (Limit > 0) ? Limit : 200, query: Query, filter: new FilterBuilder(Filter));
+
+                WriteObject(res, true);
             }
         }
     }
